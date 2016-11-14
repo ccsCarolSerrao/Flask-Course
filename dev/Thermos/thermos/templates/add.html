@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "form_macro.html" import render_field %}
+
+{% block title %}
+Thermos - Add a New Bookmark
+{% endblock %}
+
+{% block content %}      
+        <header>
+            <h1>Add a URL new link</h1>
+        </header>      
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            <table>
+                {{ render_field(form.url, size=50) }}
+                {{ render_field(form.description, size=50) }}
+                <tr class="submit">
+                    <td colspan="2">
+                        <button type="submit">Submit</button>
+                    </td>
+                </tr> 
+            </table>       
+        </form>   
+{% endblock %}   
+
+{% block sidebar %}     
+{% endblock %}          
