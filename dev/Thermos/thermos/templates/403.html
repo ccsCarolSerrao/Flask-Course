@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Page Not Found :(</title>
+        <title>Not allowed :(</title>
         <style>
             ::-moz-selection {
                 background: #b3d4fc;
@@ -141,8 +141,9 @@
     </head>
     <body>
         <div class="container">
-            <h1>Unauthorized <span>:(</span></h1>
-            <p>The serve could not verify that you are authorized to access the URL request.</p>
+            <h1>Not allowed <span>:(</span></h1>
+            <p>You don't have permission to view this page.' <a href="{{ url_for('index') }}">Home</a></p>
+
             <script>
                 var GOOG_FIXURL_LANG = (navigator.language || '').slice(0,2),GOOG_FIXURL_SITE = location.host;
             </script>

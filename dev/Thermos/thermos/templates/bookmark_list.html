@@ -1,0 +1,27 @@
+<ul class="bookmarks">
+    {% for bm in bookmarks %}
+        <li>
+            <a class="header" href="{{ bm.nm_url }}">
+                <h3 class="description">
+                    {{ bm.nm_description|truncate(50, killwords=True) }}
+                </h3>
+                <span class="url">
+                    {{ bm.nm_url|truncate(50, killwords=True) }}
+                </span>
+            </a>
+            <div class="info">
+                <br>
+
+                Added by <a href="{{ url_for('user', username=bm.user.nm_userName) }}">
+                    {{ bm.user.nm_userName }}
+                </a>
+                {{ moment(bm.dt_bookmark).fromNow() }}.
+                {% if current_user == bm.user %}
+                    <span class="editlinks">
+                        <a href="{{ url_for('edit_bookmark', bookmarkid=bm.id_bookmark) }}">edit</a>
+                    </span>
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>

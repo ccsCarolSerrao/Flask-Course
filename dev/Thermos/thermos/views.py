@@ -1,13 +1,14 @@
-from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_required, login_user
+from flask import render_template, request, redirect, url_for, flash, abort
+from flask_login import login_required, login_user, logout_user, current_user
 
 from thermos import app, db, login_manager
-from . forms import BookmarkForm, LoginForm
+from . forms import BookmarkForm, LoginForm, SingupForm
 from . models import User, Bookmark
 
 @login_manager.user_loader
 def logged_in_user(userid):
-    return User.query.get(int(userid))
+    return User.get_by_id(int(userid))
+
 
 @app.route('/')
 @app.route('/index')
@@ -15,19 +16,20 @@ def index():
     return render_template('index.html',
                            new_bookmarks=Bookmark.newest(5))
 
+
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
-def add():
+def add_bookmark():
     form = BookmarkForm()
     if form.validate_on_submit():
         url = form.url.data
         description = form.description.data
-        bm = Bookmark(nm_url=url, nm_description=description, user=logged_in_user())
+        bm = Bookmark( user=current_user, nm_url=url, nm_description=description)
         db.session.add(bm)
         db.session.commit()
         flash('Stored url: {0} - {1}'.format(url, description))
-        return redirect(url_for('add'))
-    return render_template('add.html', form=form)
+        return redirect(url_for('user', username=bm.user.nm_userName))
+    return render_template('bookmark_form.html', form=form, title='Add a New Bookmark', titleHeader='Add a URL new link')
     '''WORKING WHITHOU WTF
         if request.method == "POST":
             url = request.form['url']
@@ -35,8 +37,23 @@ def add():
             store_bookmark(url, description)
             flash('Stored url: {0} - {1}'.format(url, description))
             return redirect(url_for('add'))
-        return render_template('add.html')
+        return render_template('bookmark_form.html')
     '''
+
+@app.route('/edit/<int:bookmarkid>', methods=['GET', 'POST'])
+@login_required
+def edit_bookmark(bookmarkid):
+    bm = Bookmark.query.get_or_404(bookmarkid)
+    if(current_user != bm.user):
+        abort(403)
+    form = BookmarkForm(obj=bm)
+    if form.validate_on_submit():
+        form.populate_obj(bm)
+        db.session.commit()
+        flash('Stored url: {0} - {1}'.format(url, description))
+        return redirect(url_for('user', username=current_user.nm_userName))
+    return render_template('bookmark_form.html', form=form, title='Edit Bookmark', titleHeader='Edit Bookmark')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,27 +61,59 @@ def login():
     if form.validate_on_submit():
         #Login and validate user...
         username = form.username.data
-        user = User.query.filter_by(nm_userName=username).first()
-        if user is not None:
+        password = form.password.data
+        user = User.get_by_username(username)
+        if user is not None and user.check_password(password):
             login_user(user, form.remember_me.data)            
             flash('Logged in successfully as {0}.'.format(username))
-            return redirect(request.args.get('next')) or url_for('index')
+            return redirect(request.args.get('next') or url_for('user', username=username))
         flash('Incorrect username or password.')
     return render_template('login.html', form=form)
+
+
+@app.route('/singup', methods=['GET', 'POST'])
+def singup():
+    form = SingupForm()
+    if form.validate_on_submit():
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+        email = form.email.data
+        username = form.username.data
+        password = form.password.data
+        user = User(nm_firstName=firstname, 
+                    nm_lastName=lastname, 
+                    nm_email=email, 
+                    nm_userName=username, 
+                    password=password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Welcome, {0}! Please login'.format(firstname))
+        return redirect(url_for('login'))
+    return render_template('singup.html', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))    
+
 
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    user = User.query.filter_by(nm_userName=username).first_or_404()
+    user = User.get_by_username(username)
     return render_template('user.html', user=user)
+
 
 @app.errorhandler(401)
 def unauthorized(e):
     return render_template('401.html'), 401
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 @app.errorhandler(500)
 def server_error(e):

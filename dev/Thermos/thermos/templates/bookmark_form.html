@@ -2,12 +2,12 @@
 {% from "form_macro.html" import render_field %}
 
 {% block title %}
-Thermos - Add a New Bookmark
+Thermos - {{ title }}
 {% endblock %}
 
 {% block content %}      
         <header>
-            <h1>Add a URL new link</h1>
+            <h1>{{ titleHeader }}</h1>
         </header>      
         <form action="" method="POST">
             {{ form.hidden_tag() }}

@@ -21,9 +21,14 @@
                 <a href="{{ url_for('index') }}"><h1 class="title">Thermos</h1></a>
                 <nav>
                     <ul>
-                        <li><a href="{{ url_for('add') }}">Add URL</a></li>
-                        <li><a href="#">Sing Up</a></li>
-                        <li><a href="{{ url_for('login') }}">Sing In</a></li>
+                        <li><a href="{{ url_for('add_bookmark') }}">Add URL</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user', username=current_user.nm_userName) }}">My Links</a></li>
+                            <li><a href="{{ url_for('logout') }}">Sing Out</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('singup') }}">Sing Up</a></li>
+                            <li><a href="{{ url_for('login') }}">Sing In</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </header>
@@ -67,5 +72,8 @@
         <script>window.jQuery || document.write("{{ url_for('static', filename='s/vendor/jquery-1.11.2.min.js') }}"><\/script>')</script>
 
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        
+        {{ moment.include_jquery() }}
+        {{ moment.include_moment() }}
     </body>
 </html>
