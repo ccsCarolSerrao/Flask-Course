@@ -5,6 +5,11 @@
 Thermos - {{ title }}
 {% endblock %}
 
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/select2.css') }}">
+{% endblock %}
+
 {% block content %}      
         <header>
             <h1>{{ titleHeader }}</h1>
@@ -12,8 +17,9 @@ Thermos - {{ title }}
         <form action="" method="POST">
             {{ form.hidden_tag() }}
             <table>
-                {{ render_field(form.url, size=50) }}
-                {{ render_field(form.description, size=50) }}
+                {{ render_field(form.nm_url, size=50) }}
+                {{ render_field(form.nm_description, size=50) }}
+                {{ render_field(form.tags, size=50, id="tags") }}
                 <tr class="submit">
                     <td colspan="2">
                         <button type="submit">Submit</button>
@@ -21,6 +27,16 @@ Thermos - {{ title }}
                 </tr> 
             </table>       
         </form>   
+{% endblock %}   
+
+{% block scripts %}   
+<script src="{{ url_for('static', filename='js/vendor/select2.min.js') }}"></script>
+<script>
+$(document).ready(function(){
+    var _tags = {{ all_tags()|map(attribute='nm_tag')|list|tojson|safe }};
+    $('#tags').select2({tags: _tags, tokenSeparators: [",", " "]});
+});
+</script>  
 {% endblock %}   
 
 {% block sidebar %}     

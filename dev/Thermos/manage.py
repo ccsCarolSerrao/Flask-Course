@@ -10,16 +10,15 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def insert_data():
-    db.create_all()
     password = 'pbkdf2:sha1:1000$KTWMA2qC$6675e6362c9ba12c3d483ede406061272b900368'
-    user1 = User(nm_firstName='Carolina', nm_lastName='Serrao', nm_userName='cserrao', nm_email='ccs.serrao@gmail.com', nm_passwordHash=password)
+    user1 = User(nm_firstName='Camila', nm_lastName='Serrão', nm_userName='milla', nm_email='milla.serrao@gmail.com', nm_passwordHash=password)
     db.session.add(user1)
 
     def add_bookmark(url, description, tags):
-        db.session.add(Bookmark(nm_url=url, nm_description=description, tags=tags))
+        db.session.add(Bookmark(user=user1, nm_url=url, nm_description=description, tags=tags))
     
-    for t in ['python', 'webdev', 'programming', 'training', 'news', 'orm', 'databases', 'emacs', 'gtd', 'django']:
-        db.session.add(Tag(nm_tag=t))
+    #for t in ['python', 'webdev', 'programming', 'training', 'news', 'orm', 'databases', 'emacs', 'gtd', 'django']:
+    #    db.session.add(Tag(nm_tag=t))
 
     db.session.commit()
 
@@ -27,8 +26,7 @@ def insert_data():
     add_bookmark('http://www.flask.pocoo.org', 'Web development one drop at time.', 'python, programming')
     
     
-    
-    db.session.add(User(nm_firstName='Marcelli', nm_lastName='Mattos', nm_userName='mmattos', nm_email='mattos,marcelli@gmail.com', nm_passwordHash=password))
+    #db.session.add(User(nm_firstName='Marcelli', nm_lastName='Mattos', nm_userName='mmattos', nm_email='mattos,marcelli@gmail.com', nm_passwordHash=password))
 
     db.session.commit()
 

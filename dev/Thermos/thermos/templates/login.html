@@ -12,8 +12,8 @@ Thermos - Login
         <form action="" method="POST">
             {{ form.hidden_tag() }}
             <table>
-                {{ render_field(form.username, size=40) }}
-                {{ render_field(form.password, size=40) }}
+                {{ render_field(form.nm_userName, size=40) }}
+                {{ render_field(form.nm_password, size=40) }}
                 {{ render_field(form.remember_me) }}
                 {{ render_field(form.submit) }}
             </table>       

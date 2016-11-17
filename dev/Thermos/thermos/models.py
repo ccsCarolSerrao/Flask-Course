@@ -17,6 +17,15 @@ class Bookmark(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
     _tags = db.relationship('Tag', secondary=tags, backref=db.backref('bookmarks', lazy='dynamic'))
 
+    @property
+    def tags(self):
+        return ','.join(tag.nm_tag for tag in self._tags)
+
+    @tags.setter
+    def tags(self, sTags):
+        if sTags:
+            self._tags = [Tag.get_or_create(t) for t in sTags.split(',')]
+
     @staticmethod
     def newest(num):
         return Bookmark.query.order_by(desc(Bookmark.dt_bookmark)).limit(num)
@@ -49,14 +58,16 @@ class User(db.Model, UserMixin):
     @password.setter
     def password(self, password):
         self.nm_passwordHash = generate_password_hash(password)
-        return
     
     def check_password(self, password):
         return check_password_hash(self.nm_passwordHash, password)
     
     @staticmethod
-    def get_by_username(username):
-        return User.query.filter_by(nm_userName=username).first_or_404()
+    def get_by_username(username, site=False):
+        if(site):
+            return User.query.filter_by(nm_userName=username).first_or_404()
+        else:
+            return User.query.filter_by(nm_userName=username).first()
 
     @staticmethod
     def get_by_email(email):
@@ -72,6 +83,25 @@ class User(db.Model, UserMixin):
 class Tag(db.Model):
     id_tag = db.Column(db.Integer, primary_key=True)
     nm_tag = db.Column(db.String(25), nullable=False, unique=True, index=True)
+
+    @staticmethod
+    def get_or_create(nm_tag):
+        try:
+            return Tag.query.filter_by(nm_tag=nm_tag).one()
+        except:
+            return Tag(nm_tag=nm_tag)
+
+    
+    @staticmethod
+    def all():
+        return Tag.query.all()
+
+    @staticmethod
+    def get_by_name(name):
+        if(site):
+            return Tag.query.filter_by(nm_tag=name).first_or_404()
+        else:
+            return Tag.query.filter_by(nm_tag=name).first()
 
     def __repr__(self):
         return self.nm_tag       

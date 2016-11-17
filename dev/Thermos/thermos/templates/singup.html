@@ -12,12 +12,12 @@ Thermos - Login
         <form action="" method="POST">
             {{ form.hidden_tag() }}
             <table>
-                {{ render_field(form.firstname, size=40) }}
-                {{ render_field(form.lastname, size=40) }}
-                {{ render_field(form.email, size=80) }}
-                {{ render_field(form.username, size=20) }}
-                {{ render_field(form.password, size=20) }}
-                {{ render_field(form.password2, size=20) }}
+                {{ render_field(form.nm_firstName, size=40) }}
+                {{ render_field(form.nm_lastName, size=40) }}
+                {{ render_field(form.nm_email, size=80) }}
+                {{ render_field(form.nm_userName, size=20) }}
+                {{ render_field(form.nm_password, size=20) }}
+                {{ render_field(form.nm_password2, size=20) }}
                 <tr class="submit">
                     <td colspan="2">
                         <button type="submit">Submit</button>

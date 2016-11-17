@@ -14,18 +14,25 @@ class BookmarkForm(Form):
                 valid url input - url()
             description:
     '''
-    url = URLField('The URL for your bookmark:', validators=[DataRequired(message='Input an URL'), url()])
-    description = StringField('Add an optional description:')
+    nm_url = URLField('The URL for your bookmark:', validators=[DataRequired(message='Input an URL'), url()])
+    nm_description = StringField('Add an optional description:')
+    tags = StringField('Tags:', validators=[Regexp('^[A-Za-z0-9, ]*$', message='Tags consit of letters and numbers.')])
 
     def validate(self):
-        if not (self.url.data.startswith('https://') or self.url.data.startswith('http://')):
-            self.url.data = "http://" + self.url.data
+        if not (self.nm_url.data.startswith('https://') or self.nm_url.data.startswith('http://')):
+            self.nm_url.data = "http://" + self.nm_url.data
 
         if not Form.validate(self):
             return False
 
-        if not self.description.data:
-            self.description.data = self.url.data
+        if not self.nm_description.data:
+            self.nm_description.data = self.nm_url.data
+        
+        #filter our empty and duplicate tag names
+        stripped = [t.strip() for t in self.tags.data.split(',')] #retira os espaços
+        not_empty = [tag for tag in stripped if tag] #retira os vazios
+        tagset = set(not_empty) #retira os duplicados
+        self.tags.data = ','.join(tagset)
 
         return True
 
@@ -39,8 +46,8 @@ class LoginForm(Form):
                 valid url input - url()
             description:
     '''
-    username = StringField('Your UserName:', validators=[DataRequired()])
-    password = PasswordField('Password:', validators=[DataRequired()]) 
+    nm_userName = StringField('Your UserName:', validators=[DataRequired()])
+    nm_password = PasswordField('Password:', validators=[DataRequired()]) 
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')  
 
@@ -50,37 +57,37 @@ class SingupForm(Form):
             Form - Form Objetct - SingupForm
         Validator:
     '''   
-    firstname = StringField('First Name:', 
+    nm_firstName = StringField('First Name:', 
                             validators=[
                                 DataRequired(), Length(1, 120),
                                 Regexp('^[A-Za-z ]{1,}$',
                                         message='Username consit of letters.')
                             ])
-    lastname = StringField('Last Name:', 
+    nm_lastName = StringField('Last Name:', 
                             validators=[
                                 DataRequired(), Length(1, 120),
                                 Regexp('[A-Za-z ]{1,}$',
                                         message='Username consit of letters.')
                             ])
-    email = StringField('E-mail:', validators= [DataRequired(), Length(1, 120), Email()])                            
-    username = StringField('Username:', 
+    nm_email = StringField('E-mail:', validators= [DataRequired(), Length(1, 120), Email()])                            
+    nm_userName = StringField('Username:', 
                             validators=[
                                 DataRequired(), Length(3, 80),
                                 Regexp('^[A-Za-z0-9_]{3,}$',
                                         message='Username consit of numbers, letters and underscores.')
                             ])
-    password = PasswordField('Password:', 
+    nm_password = PasswordField('Password:', 
                             validators=[
                                 DataRequired(), Length(6,),
-                                EqualTo('password2',
+                                EqualTo('nm_password2',
                                         message='Password must match.')
                             ])
-    password2 = PasswordField('Confirm Password:', validators=[DataRequired(), Length(6,)])
+    nm_password2 = PasswordField('Confirm Password:', validators=[DataRequired(), Length(6,)])
 
-    def validate_email(self, email_field):
-        if User.get_by_email(email_field.data):
+    def validate_email(self, nm_email_field):
+        if User.get_by_email(nm_email_field.data):
             raise ValidationError('There already is an user with this email adress.')
     
-    def validate_username(self, username_field):
-        if User.query.filter_by(nm_userName=username_field.data).first():
+    def validate_username(self, nm_userName_field):
+        if User.query.filter_by(nm_userName=nm_userName_field.data).first():
             raise ValidationError('This username is already taken.')            

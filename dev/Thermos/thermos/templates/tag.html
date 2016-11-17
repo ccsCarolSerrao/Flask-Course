@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+Thermos - Bookmarks tagged {{ tag.nm_tag }}
+{% endblock %}
+
+{% block content %}      
+        <header>
+            <h1>Bookmarks tagged {{ tag.nm_tag }}</h1>
+        </header>      
+        <section>
+            {% if tag.bookmarks.count() > 0 %}
+                    <ul class="bookmarks">
+                        {% with bookmarks = tag.bookmarks %}
+                            {% include "bookmark_list.html" %}
+                        {% endwith %}
+                    </ul>
+                {% else %}
+                    There are no bookmarks with this tag.
+                {% endif %}
+        </section>
+{% endblock %}   
+
+{% block sidebar %}     
+{% endblock %}          
