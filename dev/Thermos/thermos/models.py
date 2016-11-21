@@ -15,7 +15,7 @@ class Bookmark(db.Model):
     dt_bookmark = db.Column(db.DateTime, default=datetime.utcnow)
     nm_description = db.Column(db.String(300))
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
-    _tags = db.relationship('Tag', secondary=tags, backref=db.backref('bookmarks', lazy='dynamic'))
+    _tags = db.relationship('Tag', secondary=tags, lazy='joined', backref=db.backref('bookmarks', lazy='dynamic'))
 
     @property
     def tags(self):
@@ -97,7 +97,7 @@ class Tag(db.Model):
         return Tag.query.all()
 
     @staticmethod
-    def get_by_name(name):
+    def get_by_name(name, site=False):
         if(site):
             return Tag.query.filter_by(nm_tag=name).first_or_404()
         else:

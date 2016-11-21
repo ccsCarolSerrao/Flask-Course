@@ -20,16 +20,16 @@
     <body>
         <div class="header-container">
             <header class="wrapper clearfix">
-                <a href="{{ url_for('index') }}"><h1 class="title">Thermos</h1></a>
+                <a href="{{ url_for('main.index') }}"><h1 class="title">Thermos</h1></a>
                 <nav>
                     <ul>
-                        <li><a href="{{ url_for('add_bookmark') }}">Add URL</a></li>
+                        <li><a href="{{ url_for('bookmark.add_bookmark') }}">Add URL</a></li>
                         {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('user', username=current_user.nm_userName) }}">My Links</a></li>
-                            <li><a href="{{ url_for('logout') }}">Sing Out</a></li>
+                            <li><a href="{{ url_for('bookmark.user', username=current_user.nm_userName) }}">My Links</a></li>
+                            <li><a href="{{ url_for('auth.logout') }}">Sing Out</a></li>
                         {% else %}
-                            <li><a href="{{ url_for('singup') }}">Sing Up</a></li>
-                            <li><a href="{{ url_for('login') }}">Sing In</a></li>
+                            <li><a href="{{ url_for('auth.singup') }}">Sing Up</a></li>
+                            <li><a href="{{ url_for('auth.login') }}">Sing In</a></li>
                         {% endif %}
                     </ul>
                 </nav>
