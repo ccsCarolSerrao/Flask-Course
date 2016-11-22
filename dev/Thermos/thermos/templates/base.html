@@ -25,7 +25,7 @@
                     <ul>
                         <li><a href="{{ url_for('bookmark.add_bookmark') }}">Add URL</a></li>
                         {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('bookmark.user', username=current_user.nm_userName) }}">My Links</a></li>
+                            <li><a href="{{ url_for('auth.user', username=current_user.nm_userName) }}">My Links</a></li>
                             <li><a href="{{ url_for('auth.logout') }}">Sing Out</a></li>
                         {% else %}
                             <li><a href="{{ url_for('auth.singup') }}">Sing Up</a></li>
@@ -59,7 +59,7 @@
                     <aside>
                         <h3>Tags</h3>
                             {% for t in all_tags() %}
-                                <a href="{{ url_for('tag', name=t) }}">{{ t }}</a>
+                                <a href="{{ url_for('bookmark.tag', name=t) }}">{{ t }}</a>
                             {% endfor %}
                     </aside>
                 {% endblock %}

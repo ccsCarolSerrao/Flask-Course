@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm as Form
 from wtforms.fields import StringField, PasswordField, BooleanField, SubmitField
 from flask.ext.wtf.html5 import URLField
 from wtforms.validators import DataRequired, url, Length, Email, EqualTo, Regexp, ValidationError
-from . models import User
+from .. models import User
 
 class BookmarkForm(Form):
     '''Create an Form Object to Validate

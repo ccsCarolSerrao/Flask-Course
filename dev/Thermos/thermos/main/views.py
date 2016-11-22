@@ -1,18 +1,17 @@
 
 from flask import render_template
 
-from .. import login_manager
 from . import main
+from .. import login_manager
 from .. models import User, Bookmark, Tag
-
 
 @login_manager.user_loader
 def logged_in_user(userid):
     return User.get_by_id(int(userid))
 
 
-@main.route('/')
 @main.route('/index')
+@main.route('/')
 def index():
     return render_template('index.html',
                            new_bookmarks=Bookmark.newest(5))
@@ -20,6 +19,10 @@ def index():
 @main.app_errorhandler(401)
 def unauthorized(e):
     return render_template('401.html'), 401
+
+@main.app_errorhandler(403)
+def forbidden(e):
+    return render_template('403.html'), 404
 
 @main.app_errorhandler(404)
 def page_not_found(e):

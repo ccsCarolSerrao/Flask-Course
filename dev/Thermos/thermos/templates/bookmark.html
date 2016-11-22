@@ -20,7 +20,7 @@
 
         <br>
 
-        Added by <a href="{{ url_for('bookmark.user', username=bm.user.nm_userName) }}">
+        Added by <a href="{{ url_for('auth.user', username=bm.user.nm_userName) }}">
             {{ bm.user.nm_userName }}
         </a>
         {{ moment(bm.dt_bookmark).fromNow() }}.

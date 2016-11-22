@@ -1,9 +1,10 @@
 from flask import render_template, request, redirect, url_for, flash, abort
-from flask_login import login_required
+from flask_login import login_required, current_user
 
-from thermos import app, db, login_manager
+from . import bookmark
+from thermos import db
 from . forms import BookmarkForm
-from . models import Bookmark, Tag
+from .. models import Bookmark, Tag
 
 
 
@@ -19,7 +20,7 @@ def add_bookmark():
         db.session.add(bm)
         db.session.commit()
         flash('Stored url: {0} - {1}'.format(url, description))
-        return redirect(url_for('.user', username=bm.user.nm_userName))
+        return redirect(url_for('auth.user', username=bm.user.nm_userName))
     return render_template('bookmark_form.html', form=form, title='Add a New Bookmark', titleHeader='Add a URL new link')
     '''WORKING WHITHOU WTF
         if request.method == "POST":
@@ -42,7 +43,7 @@ def edit_bookmark(bookmarkid):
         form.populate_obj(bm)
         db.session.commit()
         flash('Stored url: {0} - {1}'.format(bm.nm_url, bm.nm_description))
-        return redirect(url_for('.user', username=current_user.nm_userName))
+        return redirect(url_for('auth.user', username=current_user.nm_userName))
     return render_template('bookmark_form.html', form=form, title='Edit Bookmark', titleHeader='Edit Bookmark')
 
 
@@ -56,17 +57,10 @@ def delete_bookmark(bookmarkid):
         db.session.delete(bm)
         db.session.commit()
         flash("Deleted {}".format(bm.nm_description))
-        return redirect(url_for('.user', username=current_user.nm_userName))
+        return redirect(url_for('auth.user', username=current_user.nm_userName))
     else:
         flash("Please confirm deleting the bookmark.")
     return render_template('confirm_delete.html', bm=bm, nolinks=True)
-
-
-@bookmark.route('/user/<username>')
-@login_required
-def user(username):
-    user = User.get_by_username(username,True)
-    return render_template('user.html', user=user)
 
 @bookmark.route('/tag/<name>')
 def tag(name):

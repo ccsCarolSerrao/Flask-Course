@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 
 from . import auth
 from .. import db
@@ -18,7 +18,7 @@ def login():
         if user is not None and user.check_password(password):
             login_user(user, form.remember_me.data)            
             flash('Logged in successfully as {0}.'.format(username))
-            return redirect(request.args.get('next') or url_for('user', username=username))
+            return redirect(request.args.get('next') or url_for('.user', username=username))
         flash('Incorrect username or password.')
     return render_template('login.html', form=form)
 
@@ -47,4 +47,11 @@ def singup():
 @auth.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))    
+    return redirect(url_for('main.index'))    
+
+    
+@auth.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.get_by_username(username,True)
+    return render_template('user.html', user=user)

@@ -25,6 +25,9 @@ class Bookmark(db.Model):
     def tags(self, sTags):
         if sTags:
             self._tags = [Tag.get_or_create(t) for t in sTags.split(',')]
+        else:
+            self._tags = []
+
 
     @staticmethod
     def newest(num):
